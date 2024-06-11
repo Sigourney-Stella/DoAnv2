@@ -1,0 +1,147 @@
+﻿@model IEnumerable<BookStoreTM.Models.OrderDetails>
+@{
+    ViewData["Title"] = "orderDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var orders = ViewBag.orders as List<OrderBook>;
+}
+
+<main class="main-content">
+    <div class="account-page-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="tab-content myaccount-tab-content" id="account-page-tab-content">
+                        <div class="" id="account-orders" role="tabpanel" aria-labelledby="account-orders-tab">
+                            @if (ViewBag.orders != null && ViewBag.orders.Count > 0)
+                            {
+                                var order = ViewBag.orders[0];
+                                <div class="d-flex" style="justify-content: space-between;">
+                                    <div style="font-size: 20px;">
+                                        <span>Đại Chỉ Nhận Hàng</span>
+                                    </div>
+
+                                    <div style="font-size: 17px;">
+                                        <span>MÃ HOÁ ĐƠN. @order.CodeOrder</span> | <span class="text-danger" style="text-transform: uppercase;">@ViewBag.Status</span>
+                                    </div>
+                                </div>
+
+                                <div class="myaccount-dashboard d-flex row">
+                                    <p>
+                                        Họ và tên: @order.ReceiveName
+                                    </p>
+                                    <p>
+                                        Số điện thoại: @order.ReceivePhone
+                                    </p>
+                                    <p>
+                                        Địa chỉ: @order.ReceiveAddress
+                                    </p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12">
+                    <div class="tab-content myaccount-tab-content" id="account-page-tab-content">
+                        <div class="" id="account-orders" role="tabpanel" aria-labelledby="account-orders-tab">
+                            @if (Model != null && Model.Any())
+                            {
+                                @foreach (var item in Model)
+                                {
+                                    <div class="myaccount-orders d-flex row">
+
+                                        <div class="col-md-2">
+                                            <img class="img-product-detail" src="@item.Product.Images" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="prduct-name">@item.Product.ProductName</p>
+                                            @* <p class="prduct-cate">Phân loại: @item.Product.ProductCategory.Name</p> *@
+                                            <p class="prduct-cate">Số lượng: @item.Quatity</p>
+                                            <div class="price-box pb-1">
+                                                @if (item.TotalMoney > 0)
+                                                {
+                                                    <span class="old-price" style="color: #757575;">
+                                                        @BookStoreTM.Common.Common.FormatNumber(item.Price, 0) VND
+                                                    </span>
+
+                                                    <span class="new-price text-danger">
+                                                        @BookStoreTM.Common.Common.FormatNumber(item.TotalMoney, 0) VND
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="new-price">
+                                                        @BookStoreTM.Common.Common.FormatNumber(item.Price, 0) VND
+                                                    </span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="col-md-12" style="text-align: end;">
+                                    <div>
+                                        <p class="totalPrice">Thành tiền: <span class="new-price text-danger"> @BookStoreTM.Common.Common.FormatNumber(ViewBag.totalMoney, 0) VND </span></p>
+                                    </div>
+                                    @* <div class="button-wrap mt-4">
+                                        <button type="submit" value="submit" class="btn btn btn-custom-size btn-primary btn-secondary-hover rounded-0" name="submit">Trả hàng</button>
+                                    </div> *@
+                                </div>
+                            }
+                            else
+                            {
+                                <div>Bạn chưa có đơn hàng nào</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<style>
+    .img-product-detail {
+        height: 100px;
+        width: 150px;
+    }
+
+    .myaccount-orders.d-flex {
+        border-top: 1px solid #E8E8E8;
+        padding: 10px 0;
+        border-bottom: 1px solid #E8E8E8;
+        margin-bottom: 2rem;
+        background: white;
+    }
+
+    .section-space-y-axis-100 {
+        /* background: #f5f5f5; */
+        padding-top: 4rem;
+    }
+
+    p, p.prduct-name {
+        margin-bottom: 0px;
+        font-size: 18px;
+    }
+
+        p.prduct-cate {
+            font-size: 15px;
+            color: #757575;
+        }
+
+    .col-md-4 {
+        padding: 0px;
+        text-align: right;
+    }
+
+    .old-price {
+        margin: 0 4px 0 0;
+    }
+
+    p.totalPrice {
+        font-size: 20px;
+    }
+
+    .myaccount-dashboard p {
+       margin-bottom: 0px;
+    }
+    
+</style>

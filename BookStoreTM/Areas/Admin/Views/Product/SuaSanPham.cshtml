@@ -1,0 +1,292 @@
+﻿@model BookStoreTM.Models.Product
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Sửa sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<script src="~/ckeditor5-build-classic/ckeditor.js"></script>
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Chỉnh sửa sản phẩm</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Sản Phẩm</a></li>
+                    <li class="breadcrumb-item active">Thêm mới</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thông tin sản phẩm</h3>
+        </div>
+
+        <div class="bs-stepper-content">
+            @using (Html.BeginForm("SuaSanPham", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(false)
+                @Html.HiddenFor(x => x.ProductId)
+                <input asp-for="CreatedDate" type="hidden"/>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <!-- thông tin chung -->
+                            <div class="active tab-pane" id="activity">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Mã sản phẩm</label>
+                                            @Html.TextBoxFor(x => x.Code, new { @class = "form-control", @placeholder = "Mã sản phẩm", @readonly = "readonly" })
+                                            @Html.ValidationMessageFor(x => x.Code, null, new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Tên sản phẩm</label>
+                                            @Html.TextBoxFor(x => x.ProductName, new { @class = "form-control", @placeholder = "Tên sản phẩm" })
+                                            @Html.ValidationMessageFor(x => x.ProductName, null, new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Tên tác giả</label>
+                                            @Html.TextBoxFor(x => x.Author, new { @class = "form-control", @placeholder = "Tên tác giả" })
+                                            @Html.ValidationMessageFor(x => x.Author, null, new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputFile">Hình ảnh</label>
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    @* <input asp-for="Images" type="file" class="form-control" multiple> *@
+                                                    <input asp-for="Images" class="form-control" multiple>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Danh mục</label>
+                                            @Html.DropDownListFor(x => x.ProductCategoryId, ViewBag.ProductCategory as SelectList, "-Chọn danh mục sản phẩm-", new { @class = "form-control", @placeholder = "Mã mã phẩm" })
+                                            @Html.ValidationMessageFor(x => x.ProductCategoryId, null, new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Nhà xuất bản</label>
+                                            @Html.DropDownListFor(x => x.PublisherId, ViewBag.Publisher as SelectList, "-Chọn Nhà xuất bản-", new { @class = "form-control", @placeholder = "Mã mã phẩm" })
+                                            @Html.ValidationMessageFor(x => x.PublisherId, null, new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Mô tả</label>
+                                    @Html.TextAreaFor(x => x.Description, new { @class = "form-control", @placeholder = "Mô tả" })
+                                    @Html.ValidationMessageFor(x => x.Description, null, new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="Detail" class="control-label">Chi Tiết </label>
+                                    <textarea asp-for="Detail" id="inputDetai" class="form-control"></textarea>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Số lượng</label>
+                                            @Html.TextBoxFor(x => x.Quatity, new { @class = "form-control", @Value = "1" })
+                                            @Html.ValidationMessageFor(x => x.Quatity, null, new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Giá</label>
+                                            <input type="text" name="inputPrice" value="@BookStoreTM.Common.Common.FormatNumber(Model.Price, 0)" id="inputPrice" class="form-control auto" data-a-dec="," data-a-sep=".">
+                                            @Html.HiddenFor(x => x.Price, new { @class = "", @placeholder = "Giá" })
+                                            @Html.ValidationMessageFor(x => x.Price, null, new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Giá Khuyến mãi</label>
+                                            <input type="text" name="inputPriceSale" value="@BookStoreTM.Common.Common.FormatNumber(Model.PriceSale, 0)" id="inputPriceSale" class="form-control auto" data-a-dec="," data-a-sep=".">
+                                            @Html.HiddenFor(x => x.PriceSale, new { @class = "", @placeholder = "Giá Khuyến mãi" })
+                                            @Html.ValidationMessageFor(x => x.PriceSale, null, new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Giá Nhập vào</label>
+                                            <input type="text" name="inputOriginalPrice" value="@BookStoreTM.Common.Common.FormatNumber(Model.OriginalPrice, 0)" id="inputPriceSale" class="form-control auto" data-a-dec="," data-a-sep=".">
+                                            @Html.HiddenFor(x => x.OriginalPrice, new { @class = "", @placeholder = "Giá Nhập vào" })
+                                            @Html.ValidationMessageFor(x => x.OriginalPrice, null, new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <label for="exampleInputEmail1">Hiển thị</label>
+                                                @Html.CheckBoxFor(x => x.IsActicve)
+                                                @Html.ValidationMessageFor(x => x.IsActicve, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <label for="exampleInputEmail1">Home</label>
+                                                @Html.CheckBoxFor(x => x.IsHome)
+                                                @Html.ValidationMessageFor(x => x.IsHome, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <label for="exampleInputEmail1">Sale</label>
+                                                @Html.CheckBoxFor(x => x.IsSale)
+                                                @Html.ValidationMessageFor(x => x.IsSale, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <a href="/admin/product" class="btn btn-danger">Quay lại</a>
+                    <input type="submit" value="Lưu" class="btn btn-primary" />
+                </div>
+            }
+        </div>
+    </div>
+</section>
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#inputPrice').on('input', function () {
+                var price = $(this).val();
+                $('[name="Price"]').val(price);
+            });
+            $('#inputPriceSale').on('input', function () {
+                var priceSale = $(this).val();
+                $('[name="PriceSale"]').val(priceSale);
+            });
+        });
+
+        class MyUploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+
+            upload() {
+                return this.loader.file
+                    .then(file => new Promise((resolve, reject) => {
+                        this._initRequest();
+                        this._initListeners(resolve, reject, file);
+                        this._sendRequest(file);
+                    }));
+            }
+            // Aborts the upload process.
+            abort() {
+                if (this.xhr) {
+                    this.xhr.abort();
+                }
+            }
+
+            // Initializes the XMLHttpRequest object using the URL passed to the constructor.
+            _initRequest() {
+                const xhr = this.xhr = new XMLHttpRequest();
+
+                xhr.open('POST', '@Url.Action("UploadImage", "Product")', true);
+                xhr.responseType = 'json';
+            }
+
+            // Initializes XMLHttpRequest listeners.
+            _initListeners(resolve, reject, file) {
+                const xhr = this.xhr;
+                const loader = this.loader;
+                const genericErrorText = `Couldn't upload file: ${file.name}.`;
+
+                xhr.addEventListener('error', () => reject(genericErrorText));
+                xhr.addEventListener('abort', () => reject());
+                xhr.addEventListener('load', () => {
+                    const response = xhr.response;
+
+                    if (!response || response.error) {
+                        return reject(response && response.error ? response.error.message : genericErrorText);
+                    }
+
+                    resolve({
+                        default: response.url
+                    });
+                });
+
+                if (xhr.upload) {
+                    xhr.upload.addEventListener('progress', evt => {
+                        if (evt.lengthComputable) {
+                            loader.uploadTotal = evt.total;
+                            loader.uploaded = evt.loaded;
+                        }
+                    });
+                }
+            }
+
+            _sendRequest(file) {
+                // Prepare the form data.
+                const data = new FormData();
+
+                data.append('upload', file);
+
+                // Send the request.
+                this.xhr.send(data);
+            }
+        }
+
+        function MyCustomUploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                // Configure the URL to the upload script in your backend here!
+                return new MyUploadAdapter(loader);
+            };
+        }
+
+        ClassicEditor
+            .create(document.querySelector('#inputDetai'), {
+                extraPlugins: [MyCustomUploadAdapterPlugin],
+            })
+            .then(editor => {
+                window.editor = editor;
+            })
+            .catch(error => {
+                console.error(error.stack);
+            });
+    </script>
+}

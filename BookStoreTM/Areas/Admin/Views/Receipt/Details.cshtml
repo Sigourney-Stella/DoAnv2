@@ -1,0 +1,79 @@
+﻿@model BookStoreTM.Models.Receipt
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var receiptDetail = ViewBag.receiptDetail as List<ReceiptDetails>;
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Chi tiết sản phẩm</h1>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label>Mã phiếu nhập</label>
+                        <p class="form-control">@Model.Code</p>
+                    </div>
+                    <div class="form-group">
+                        <label>người nhập</label>
+                        <p class="form-control">@Model.CreatedBy</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày nhập</label>
+                        <p class="form-control">@Model.CreatedDate</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Tổng tiền nhập</label>
+                        <p class="form-control">@BookStoreTM.Common.Common.FormatNumber(Model.TotalMoney)</p>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <h4>Thông tin sản phẩm nhập</h4>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Giá tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (receiptDetail != null)
+                            {
+                                var i = 1;
+                                @foreach (var item in receiptDetail)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@item.NameProduct</td>
+                                        <td>@item.Quatity</td>
+                                        <td>@BookStoreTM.Common.Common.FormatNumber(item.Price, 0) VND</td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <a asp-action="Index" class="btn btn-danger">Quay lại</a>
+            </div>
+        </div>
+    </div>
+</section>
+

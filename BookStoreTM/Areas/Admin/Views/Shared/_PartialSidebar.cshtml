@@ -1,0 +1,149 @@
+﻿@*
+@{
+    ViewData["Title"] = "_PartialSidebar";
+    Layout = "~/Areas/Admin/Views/Shared/Admin.cshtml";
+} *@
+
+<div class="sidebar">
+    <!-- Sidebar user (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+            <img src="~/imagesbook/tm.png" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+            <a href="#" class="d-block">@User.Identity.Name</a>
+        </div>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-item">
+                <a href="/Admin/sanpham" class="nav-link">
+                    <p>
+                        <font style="vertical-align: inherit;">
+                            <font style="vertical-align: inherit;">
+                                Quản lý hệ thống
+                            </font>
+                        </font><i class="fas fa-angle-left right"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="/Admin/TransactStatus" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Trạng thái đơn hàng</font></font></p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/Admin/Publisher" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Nhà xuất bản</font></font></p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="/Admin/sanpham" class="nav-link">
+                    <p>
+                        <font style="vertical-align: inherit;">
+                            <font style="vertical-align: inherit;">
+                                Quản lý tài khoản
+                            </font>
+                        </font><i class="fas fa-angle-left right"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="/Admin/Customer" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Khách hàng</font></font></p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/Admin/Account" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Quản trị</font></font></p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="/Admin/sanpham" class="nav-link">
+                    <p>
+                        <font style="vertical-align: inherit;">
+                            <font style="vertical-align: inherit;">
+                                Quản lý sản phẩm
+                            </font>
+                        </font><i class="fas fa-angle-left right"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="/Admin/productcategory" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Danh mục sản phẩm</font></font></p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/Admin/product" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Sản phẩm</font></font></p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="/Admin/News" class="nav-link">
+                    <p>
+                        Bài đăng tin tức
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/Admin/Payments" class="nav-link">
+                    <p>
+                        Phương thức thanh toán
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/Admin/Orders" class="nav-link">
+                    <p>
+                       Quản lý Đơn hàng
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/Admin/Receipt" class="nav-link">
+                    <p>
+                       Quản lý nhập kho
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/Admin/HomeAdmin" class="nav-link">
+                    <p>
+                        Thống kê
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="javascript:document.getElementById('logOffForm').submit()" class="nav-link">
+                    <p>
+                        Đăng xuất 
+                    </p>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+</div>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <form id="logOffForm" asp-controller="Account" asp-action="LogOff" method="post" style="display: none;">
+        @Html.AntiForgeryToken()
+    </form>
+}
+

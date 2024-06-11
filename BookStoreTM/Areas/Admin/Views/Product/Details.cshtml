@@ -1,0 +1,117 @@
+﻿@model BookStoreTM.Models.Product
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var productImg = ViewBag.productImg as List<ProductImage>;
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Chi tiết sản phẩm</h1>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <div class="card">
+        <div class="card-body">
+            <div class="row" style="margin-bottom: 2rem;">
+                <div class="col-md-3">
+                    <img src="@Model.Images" class="product-image" alt="Model.ProductName" style="width: 100px !important;">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Mã sản phẩm</label>
+                        <p class="form-control">@Model.Code</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Tên Sản phẩm</label>
+                        <p class="form-control">@Model.ProductName</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Danh Mục</label>
+                        <p class="form-control">@Model.ProductCategory.Name</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Tác giả</label>
+                        <p class="form-control">@Model.Author</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Nhà xuất bản</label>
+                        <p class="form-control">@Model.Publisher.PublisherName</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Ngày tạo</label>
+                        <p class="form-control">@string.Format("{0:dd/MM/yyy}", Model.CreatedDate)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Số lượng</label>
+                        <p class="form-control">@Model.Quatity</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Giá nhập</label>
+                        <p class="form-control">@Model.OriginalPrice</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Giá bán</label>
+                        <p class="form-control">@Model.Price</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Giá khuyến mãi</label>
+                        <p class="form-control">@Model.PriceSale</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Mô tả</label>
+                        <p class="form-control">@Model.Description</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Chi tiết sản phẩm</label>
+                        @Html.Raw(Model.Detail)
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <a asp-action="Index" class="btn btn-danger">Quay lại</a>
+            </div>
+        </div>
+    </div>
+</section>
+

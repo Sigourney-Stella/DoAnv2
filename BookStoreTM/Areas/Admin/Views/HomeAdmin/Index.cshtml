@@ -1,0 +1,270 @@
+﻿@{
+    ViewData["Title"] = "Thống kê";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Thống kê</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-2 col-6">
+                <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>@ViewBag.soLuongSP</h3>
+                        <p>Số lượng sản phẩm</p>
+
+                    </div>
+                    <a href="/Admin/Product" class="small-box-footer">Chi tiết <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-2 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>@ViewBag.soLuongHD</h3>
+                        <p>Tổng số hoá đơn</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="/Admin/Orders" class="small-box-footer">Chi tiết <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-6">
+                <!-- small box -->
+                <div class="small-box" style="background-color: #d3682c !important; color: #fff;">
+                    <div class="inner">
+                        <h3>@ViewBag.soLuongDonCho</h3>
+                        <p>Đơn chờ thanh toán</p>
+
+                    </div>
+                    <a href="/Admin/Orders?statusId=1" class="small-box-footer">Chi tiết <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-2 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning" style="color: #fff;">
+                    <div class="inner">
+                        <h3>@ViewBag.soLuongDonHT</h3>
+                        <p>Đơn hoàn thành</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                    </div>
+                    <a href="/Admin/Orders?statusId=2" class="small-box-footer">Chi tiết <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-2 col-6">
+                <!-- small box -->
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>@ViewBag.soLuongDonHuy</h3>
+                        <p>Số Đơn Huỷ</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="/Admin/Orders?statusId=3" class="small-box-footer">Chi tiết <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-2 col-6">
+                <!-- small box -->
+                <div class="small-box" style="background-color: #9f1147 !important; color: #fff;">
+                    <div class="inner">
+                        <h3>@ViewBag.baiViet</h3>
+                        <p>Số Bài Viết</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="/Admin/News" class="small-box-footer">Chi tiết <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h1 class="card-title" style="margin-top: 0.5rem;">Thống kê doanh thu</h1>
+                <div class="row card-tools" style="margin-top: 0.5rem;">
+                    <div class="form-group">
+                        <label class="sr-only" for="keyword"></label>
+                        <input type="date" class="form-control" id="fromDate" name="fromDate" placeholder="Từ ngày">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="keyword"></label>
+                        <input type="date" class="form-control" id="toDate" name="toDate" placeholder="Đến ngày">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-info" id="filterBtn">Lọc</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="chart">
+                            <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Ngày</th>
+                                    <th>Doanh thu</th>
+                                    <th>Lợi nhuận</th>
+                                </tr>
+                            </thead>
+                            <tbody id="load_data"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<style>
+    .form-group {
+        margin-bottom: 1rem;
+        margin-right: 0.75rem;
+    }
+</style>
+@section scripts {
+    <script src="~/layoutadmin/plugins/moment/moment.min.js"></script>
+    <script src="~/layoutadmin/plugins/chart.js/Chart.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var barChartInstance = null; // Khai báo biến toàn cục để lưu trữ đối tượng biểu đồ
+            var fromDate = moment().subtract(7, 'days').format('YYYY-MM-DD');
+            var toDate = moment().format('YYYY-MM-DD');
+
+            fetchData(fromDate, toDate);
+
+            function fetchData(fromDate, toDate) {
+                $.ajax({
+                    url: '/Admin/HomeAdmin/GetThongKe',
+                    type: 'GET',
+                    data: { fromDate: fromDate, toDate: toDate },
+                    success: function (rs) {
+                        if (rs && rs.data) {
+                            console.log("fetch1", fromDate, toDate)
+                            handleData(rs.data);
+                        }
+                    }
+                });
+            }
+
+            // Xử lý sự kiện khi bấm nút Lọc
+            $("#filterBtn").on("click", function () {
+                isFiltered = true;
+                var fromDate = $("#fromDate").val();
+                var toDate = $("#toDate").val();
+                console.log("fetch2", fromDate, toDate)
+                fetchData(fromDate, toDate);
+
+            });
+
+            // Hàm để xử lý dữ liệu nhận được
+            function handleData(data) {
+                var labels = data.map(function (item) {
+                    return moment(item.date).format('DD/MM/YYYY');
+                });
+                var doanhThuData = data.map(function (item) {
+                    return item.doanhThu;
+                });
+                var loiNhuanData = data.map(function (item) {
+                    return item.loiNhuan;
+                });
+
+                var barChartData = {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Doanh Thu',
+                            backgroundColor: 'rgba(60,141,188,0.9)',
+                            borderColor: 'rgba(60,141,188,0.8)',
+                            pointRadius: false,
+                            pointColor: '#3b8bba',
+                            pointStrokeColor: 'rgba(60,141,188,1)',
+                            pointHighlightFill: '#fff',
+                            pointHighlightStroke: 'rgba(60,141,188,1)',
+                            data: doanhThuData
+                        },
+                        {
+                            label: 'Lợi Nhuận',
+                            backgroundColor: 'rgba(210, 214, 222, 1)',
+                            borderColor: 'rgba(210, 214, 222, 1)',
+                            pointRadius: false,
+                            pointColor: 'rgba(210, 214, 222, 1)',
+                            pointStrokeColor: '#c1c7d1',
+                            pointHighlightFill: '#fff',
+                            pointHighlightStroke: 'rgba(220,220,220,1)',
+                            data: loiNhuanData
+                        },
+                    ]
+                };
+
+                var barChartCanvas = $('#barChart').get(0).getContext('2d');
+                var barChartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    datasetFill: false
+                };
+
+                //bỏ biểu đồ cũ nếu tồn tại
+                if (barChartInstance) {
+                    barChartInstance.destroy();
+                }
+
+                // Tạo biểu đồ mới
+                barChartInstance = new Chart(barChartCanvas, {
+                    type: 'bar',
+                    data: barChartData,
+                    options: barChartOptions
+                });//
+
+                // new Chart(barChartCanvas, {
+                //     type: 'bar',
+                //     data: barChartData,
+                //     options: barChartOptions
+                // });
+
+                loadTableData(data);
+            }
+
+            // Hàm để cập nhật bảng dữ liệu
+            function loadTableData(data) {
+                var strHtml = "";
+                $.each(data, function (i, item) {
+                    var strDate = moment(item.date).format('DD/MM/yyyy');
+                    strHtml += "<tr>";
+                    strHtml += "<td>" + (i + 1) + "</td>";
+                    strHtml += "<td>" + strDate + "</td>";
+                    strHtml += "<td>" + item.doanhThu + "</td>";
+                    strHtml += "<td>" + item.loiNhuan + "</td>";
+                    strHtml += "</tr>";
+                });
+                $('#load_data').html(strHtml);
+            }
+        });
+    </script>
+}
+
+
+
+

@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using X.PagedList.Mvc.Core;
+@model X.PagedList.IPagedList<BookStoreTM.Models.News>
+
+<main class="main-content">
+    <div class="blog-area blog-column-2 section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-6">
+                        <div class="blog-item">
+                            <div class="blog-img img-zoom-effect">
+                                <a href="/news/detail/@item.NewsId">
+                                    <img class="img-full" src="@item.Image" alt="@item.Title">
+                                </a>
+                            </div>
+                            <div class="blog-content">
+                                <div class="blog-meta text-dim-gray pb-3">
+                                    <ul>
+                                        <li class="date"><i class="fa fa-calendar-o me-2"></i>@item.CreatedDate?.ToString("dd/MM/yyyy")</li>
+                                        
+                                    </ul>
+                                </div>
+                                <h5 class="title mb-4">
+                                    <a class="title-news" href="/news/detail/@item.NewsId">@item.Title</a>
+                                </h5>
+                                <p class="short-desc mb-5">@item.Description</p>
+                                <div class="button-wrap">
+                                    <a class="btn btn-custom-size lg-size btn-dark rounded-0" href="/news/detail/@item.NewsId">Chi tiết</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="col-lg-12">
+                    <div class="pagination-area pt-10">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions
+                           {
+                               LiElementClasses = new[] { "page-item" },
+                               PageClasses = new[] { "page-link" },
+                           })
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<style>
+    p{
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+    }
+
+    img.img-full {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+    }
+
+    .title-news{
+        line-height: 1.4em;
+        word-break: break-word;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        min-height: 2.8em;
+        max-height: 2.8em;
+    }
+
+    .blog-content .short-desc {
+        max-height: 77.98px;
+        min-height: 77.98px;
+    }
+</style>

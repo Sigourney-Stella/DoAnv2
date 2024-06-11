@@ -1,0 +1,196 @@
+﻿@model X.PagedList.IPagedList<BookStoreTM.Models.OrderBook>
+@using X.PagedList.Mvc.Core;
+@{
+    ViewData["Title"] = "Danh sách hoá đơn";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Quản Lý hoá đơn</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@ViewBag.Title</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title" style="margin-top: 0.5rem;"> @ViewBag.Title </h3>
+            <div class="row card-tools">
+                <form name="frmProduct" asp-action="index" asp-controller="orders" method="get" class="form-inline">
+                    <div class="form-group" style="margin-right: 0.5rem;">
+                        <select class="custom-select" name="statusId" style="min-width: 180px;" asp-items="ViewBag.statusId" onchange="location.href='/Admin/orders/?statusId='+this.value;">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="keyword">Tìm theo tên loại</label>
+                        <input class="form-control" name="name" id="keyword" placeholder="Nhập tên cần tìm" value="@ViewBag.keyword">
+                    </div>
+                    <button type="submit" class="btn btn-default mr-1"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width: 56px;">STT</th>
+                        <th>Mã đơn hàng</th>
+                        <th>Tên khách hàng</th>
+                        <th>Số điện thoại</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái đơn hàng</th>
+                        <th>Ngày tạo</th>
+                        <th style="width: 80px;">Tác vụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = ((ViewBag.Page - 1) * ViewBag.PageSize) + 1;
+                        foreach (var item in Model)
+                        {
+                            <tr id="trow_@item.OrderId">
+                                <td>@i</td>
+                                <td>@item.CodeOrder</td>
+                                <td>@item.Customer.Fullname</td>
+                                <td>@item.ReceivePhone</td>
+                                <td>@BookStoreTM.Common.Common.FormatNumber(item.TotalMoney, 0) VND</td>
+                                <td>
+                                    @item.TransactStatus.Status
+                                </td>
+                                <td>@string.Format("{0:dd/MM/yyy}", item.OrderDate)</td>
+                                <td class="d-flex">
+                                    <a asp-action="Detail" asp-route-id="@item.OrderId" class="btn-sm btn-info"><i class="fa-solid fa-circle-info"></i></a>
+                                    <a data-toggle="modal" data-target="#modal-default_@item.OrderId" class="btn-sm btn-info"><i class="fa-solid fa-pen-to-square"></i></a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">Không có bản ghi nào </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="clearfix" style="margin-top: 2rem;">
+                <ul class="pagination pagination-sm m-0 float-right">
+                    @Html.PagedListPager(Model, page => Url.Action("index", new { page = page, name = ViewBag.keyword, statusId = ViewBag.transactId }), new PagedListRenderOptions
+               {
+                   LiElementClasses = new string[] { "page-item" },
+                   PageClasses = new string[] { "page-link" }
+               })
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+@foreach (var item in Model)
+{
+    <form id="updateForm_@item.OrderId" asp-action="UpdateOrderStatus" asp-controller="Orders" method="post">
+        <div class="modal fade" id="modal-default_@item.OrderId">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Cập nhật trạng thái</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="OrderId" value="@item.OrderId" data-id="@ViewBag.IdStatus" />
+                        <select name="IdStatus" asp-items="ViewBag.IdStatus" class="form-control">
+                            <!-- options for status -->
+                        </select>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn-sm btn-primary btnCapNhat">Cập nhật</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+
+<style>
+    .swal2-custom {
+        width: 250px !important;
+        height: 60px !important;
+        font-size: 10px;
+        color: #6495ED;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.btnCapNhat').on('click', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                var orderId = form.find('input[name="OrderId"]').val();
+                var idStatus = form.find('select[name="IdStatus"]').val();
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: { orderId: orderId, IdStatus: idStatus },
+                    success: function (response) {
+                        $('#modal-default_' + orderId).modal('hide');
+                        if (response.success) {
+                            Swal.fire({
+                                position: 'top-end',
+                                title: 'Cập nhật thành công',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                customClass: {
+                                    popup: 'swal2-custom'
+                                }
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Cập nhật thất bại',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                customClass: {
+                                    popup: 'swal2-custom'
+                                }
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Có lỗi xảy ra khi gửi yêu cầu',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            customClass: {
+                                popup: 'swal2-custom'
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+

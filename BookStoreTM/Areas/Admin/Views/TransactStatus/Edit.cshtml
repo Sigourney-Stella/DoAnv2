@@ -1,0 +1,53 @@
+﻿@model BookStoreTM.Models.TransactStatus
+
+@{
+    ViewData["Title"] = "Sửa";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Sửa trạng thái đơn hàng</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trạng thái đơn hàng</a></li>
+                    <li class="breadcrumb-item active">Sửa</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Sửa trạng thái</h3>
+        </div>
+
+        <div class="bs-stepper-content">
+            @using (Html.BeginForm("Edit", "TransactStatus", FormMethod.Post, new { }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(false)
+                @Html.HiddenFor(x => x.TransactStatusID)
+
+                <div id="logins-part" class="content active dstepper-block" role="tabpanel" aria-labelledby="logins-part-trigger">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Loại trạng thái</label>
+                        @Html.TextBoxFor(x => x.Status, new { @class = "form-control", @placeholder = "Tên" })
+                        @Html.ValidationMessageFor(x => x.Status, null, new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <a asp-action="Index" class="btn btn-danger">Quay lại</a>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+

@@ -1,0 +1,158 @@
+﻿@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var productImg = ViewBag.productImg as List<ProductImage>;
+}
+@model BookStoreTM.Models.Product
+
+
+<!-- Begin Main Content Area  -->
+<main class="main-content">
+    @if (Model != null)
+    {
+
+        <div class="single-product-area section-space-top-100">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="single-product-img h-100">
+                            <div class="swiper-container single-product-slider swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
+                                <div class="swiper-wrapper" id="swiper-wrapper-357b619ba86e9e1c" aria-live="polite" style="width: 2280px; transform: translate3d(0px, 0px, 0px);">
+                                    <div class="swiper-slide swiper-slide-visible swiper-slide-active" role="group" aria-label="1 / 4" style="width: 570px;">
+                                        <a href="@Model.Images" class="single-img gallery-popup">
+                                            <img class="img-full" src="@Model.Images" alt="Product Image">
+                                        </a>
+                                    </div>
+                                    @foreach (var item in productImg)
+                                    {
+                                        <div class="swiper-slide swiper-slide-next" role="group" aria-label="2 / 4" style="width: 570px;">
+                                            <a href="@item.Url" class="single-img gallery-popup">
+                                                <img class="img-full" src="@item.Url" alt="Product Image">
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                                <!-- Add Pagination -->
+                                <div class="swiper-pagination"></div>
+                                <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="product-thumb-with-content row">
+                            <div class="col-12 order-lg-1 order-2 pt-10 pt-lg-0">
+                                <div class="single-product-content">
+                                    <h2 class="title">@Model.ProductName</h2>
+                                    <div class="price-box pb-1">
+                                        @if (Model.PriceSale > 0)
+                                        {
+                                            <span class="new-price text-danger">@BookStoreTM.Common.Common.FormatNumber(Model.PriceSale, 0) VND</span>
+                                            <span class="old-price text-primary">@BookStoreTM.Common.Common.FormatNumber(Model.Price, 0) VND</span>
+                                        }
+                                        else
+                                        {
+                                            <div class="price-box pb-1">
+                                                <span class="new-price text-danger">@BookStoreTM.Common.Common.FormatNumber(Model.Price, 0) VND</span>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="product-category product-tags text-matterhorn pb-4">
+                                        <span class="title">Nhà xuất bản :</span>
+                                        <ul>
+                                            <li>
+                                                <b>@Model.Publisher.PublisherName</b>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="product-category product-tags text-matterhorn pb-4">
+                                        <span class="title">Tác giả :</span>
+                                        <ul>
+                                            <li>
+                                                <b>@Model.Author</b>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="product-category product-tags text-matterhorn pb-4">
+                                        <span class="title">Thể loại :</span>
+                                        <ul>
+                                            <li>
+                                                <b>@Model.ProductCategory.Name</b>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <p class="short-desc mb-6">
+                                        @Model.Description
+                                    </p>
+
+                                    <ul class="quantity-with-btn pb-7">
+                                        <li class="add-to-cart">
+                                            <a asp-controller="ShopCart" asp-action="Add" asp-route-id="@Model.ProductId" class="btn btn-custom-size lg-size btn-primary btn-secondary-hover rounded-0 btnAddToCart" data-id="@Model.ProductId"><i class="fa-solid fa-cart-shopping" style="color: #ffffff;margin-right: 0.5rem;"></i>Thêm vào giỏ hàng</a>
+                                        </li>
+                                        <li class="wishlist-btn-wrap">
+                                            <a class="btn rounded-0" asp-controller="Favorite" asp-action="AddFavorite" asp-route-productId="@Model.ProductId">
+                                                <i class="pe-7s-like"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-12 order-lg-2 order-1 pt-10 pt-lg-0">
+                                <div class="swiper-container single-product-thumbs swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events swiper-container-thumbs">
+                                    <div class="swiper-wrapper" id="swiper-wrapper-de3985987e3e319d" aria-live="polite" style="transform: translate3d(0px, 0px, 0px);">
+                                        <a href="javascript:void(0)" class="swiper-slide swiper-slide-visible swiper-slide-active swiper-slide-thumb-active" role="group" aria-label="1 / 4" style="width: 120px; margin-right: 30px;">
+                                            <img class="img-full" src="@Model.Images" alt="Product Thumnail">
+                                        </a>
+                                        @foreach (var item in productImg)
+                                        {
+                                            <a href="javascript:void(0)" class="swiper-slide swiper-slide-visible swiper-slide-next" role="group" aria-label="2 / 4" style="width: 120px; margin-right: 30px;">
+                                                <img class="img-full" src="@item.Url" alt="">
+                                            </a>
+                                        }
+                                    </div>
+                                    <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-tab-area section-space-top-100">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="nav product-tab-nav product-tab-style-2" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="active btn btn-custom-size" id="description-tab" data-bs-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">
+                                    Giới thiệu
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content product-tab-content">
+                            <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                                <div class="product-description-body">
+                                    <p class="short-desc mb-0">
+                                        @Html.Raw(Model.Detail)
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+</main>
+
+<style>
+    .single-product-slider .swiper-slide .single-img img {
+        height: auto !important;
+    }
+
+    .price-box span {
+        font-size: 20px;
+    }
+</style>
+

@@ -1,0 +1,63 @@
+﻿@model BookStoreTM.Models.News
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Chi tiết bài viêt</h1>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <div class="card">
+        <div class="card-body">
+            <div class="row" style="margin-bottom: 2rem;">
+                <div class="col-md-3">
+                    <img src="@Model.Image" class="product-image" alt="Model.ProductName" style="width: 100px !important;">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Mã sản phẩm</label>
+                        <p class="form-control">@Model.Title</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Người tạo bài viết</label>
+                        <p class="form-control">@Model.CreatedBy</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Mô tả</label>
+                        <p class="form-control">@Model.Description</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Chi tiết sản phẩm</label>
+                        @Html.Raw(Model.Detail)
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <a asp-action="Index" class="btn btn-danger">Quay lại</a>
+            </div>
+        </div>
+    </div>
+</section>
+

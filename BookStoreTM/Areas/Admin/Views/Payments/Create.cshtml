@@ -1,0 +1,58 @@
+﻿@model BookStoreTM.Models.Payment
+
+@{
+    ViewData["Title"] = "Thêm PTTT";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Thêm mới phương thức thanh toán</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">PTTT</a></li>
+                    <li class="breadcrumb-item active">Thêm mới</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thông tin danh mục</h3>
+        </div>
+
+        <div class="bs-stepper-content">
+            @using (Html.BeginForm("Create", "Payments", FormMethod.Post, new { }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(false)
+                <div id="logins-part" class="content active dstepper-block" role="tabpanel" aria-labelledby="logins-part-trigger">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Tên phương thức thanh toán</label>
+                        @Html.TextBoxFor(x => x.PaymentName, new { @class = "form-control", @placeholder = "Tên phương thức" })
+                        @Html.ValidationMessageFor(x => x.PaymentName, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Tên người tạo</label>
+                        @Html.TextBoxFor(x => x.CreatedBy, new { @class = "form-control", @placeholder = "Tên người tạo" })
+                        @Html.ValidationMessageFor(x => x.CreatedBy, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <a asp-action="Index" class="btn btn-danger">Quay lại</a>
+                        <button type="submit" class="btn btn-primary">Thêm mới</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

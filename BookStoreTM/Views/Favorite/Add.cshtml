@@ -1,0 +1,110 @@
+﻿@model IEnumerable<BookStoreTM.Models.Favorite>
+@{
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="cart-area section-space-y-axis-100">
+    <div class="container">
+        <div class="row">
+            <p style="font-size: 26px;">Sản phẩm quan tâm</p>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <form action="javascript:void(0)">
+                    <div class="">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th class="product-thumbnail">Hình ảnh</th>
+                                    <th class="cart-product-name">Tên Sản Phẩm</th>
+                                    <th class="product-price">Giá Tiền</th>
+                                    @* <th class="product_remove"></th> *@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    var i = 1;
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@(i)</td>
+                                            <td class="product-thumbnail">
+                                                <a href="javascript:void(0)">
+                                                    <img src="@item.Product.Images" alt="@item.Product.ProductName">
+                                                </a>
+                                            </td>
+                                            <td class="product-name"><a asp-controller="Products" asp-action="Detail" asp-route-id="@item.ProductId">@item.Name</a></td>
+                                            <td class="product-price">
+                                                @if (item.Product.PriceSale > 0)
+                                                {
+                                                    <span data-price="@item.Product.PriceSale" class="new-price">
+                                                        @BookStoreTM.Common.Common.FormatNumber(item.Product.PriceSale, 0)VND
+                                                    </span>
+                                                    <br />
+                                                    <span data-price="@item.Product.Price" class="old-price text-primary">
+                                                        @BookStoreTM.Common.Common.FormatNumber(item.Product.Price, 0)VND
+                                                    </span>
+                                                }
+
+                                                else
+                                                {
+                                                    <span data-price="@item.Product.Price" class="new-price text-primary">
+                                                        @BookStoreTM.Common.Common.FormatNumber(item.Product.Price, 0)VND
+                                                    </span>
+                                                }
+                                            </td>
+                                           @*  <td class="quantity">
+                                                <div class="cart-plus-minus">
+                                                    <div class="dec qtybutton"><i class="fa fa-minus"></i></div>
+                                                    <input class="cart-plus-minus-box" value="@item.Quantity" type="text">
+                                                    <div class="inc qtybutton"><i class="fa fa-plus"></i></div>
+                                                </div>
+                                            </td> *@
+                                            @* <td class="product-subtotal">
+                                                <p data-money="@money" class="total-money">
+                                                    <span id="money">@string.Format("{0:#,##0}", @money)</span>VND
+                                                </p>
+                                            </td> *@
+                                            @* <td class="product_remove btn-action">
+                                                <a href="/shopcart/remove/?id=@item.ProductId" data-id="@item.ProductId" class="btn btn-primary btn-secondary-hover remove">Xóa</a>
+                                                <a href="#" data-id="@item.ProductId" class="btn btn-primary btn-secondary-hover update">Cập nhật</a>
+                                            </td> *@
+                                        </tr>
+                                        i++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6">Không có sản phẩm nào</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    td.quantity {
+        display: flex;
+        justify-content: center;
+        border: none;
+    }
+
+    tr {
+        /*  font-size: 1.25rem; */
+        text-align: center;
+        /* margin: 5rem !important; */
+    }
+
+    img {
+        max-width: 100px !important;
+    }
+</style>

@@ -1,0 +1,185 @@
+﻿@model BookStoreTM.Models.News
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "SuaTinTuc";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<script src="~/ckeditor5-build-classic/ckeditor.js"></script>
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Thêm mới  Tin tức</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#"> Tin tức</a></li>
+                    <li class="breadcrumb-item active">Thêm mới</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thông tin Tin tức</h3>
+        </div>
+
+        <div class="bs-stepper-content">
+            @using (Html.BeginForm("SuaTinTuc", "News", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(false)
+                @Html.HiddenFor(x => x.NewsId)
+
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div id="logins-part" class="content active dstepper-block" role="tabpanel" aria-labelledby="logins-part-trigger">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tiêu đề </label>
+                            @Html.TextBoxFor(x => x.Title, new { @class = "form-control", @plachilder = "Tên danh mục" })
+                            @Html.ValidationMessageFor(x => x.Title, null, new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            <label class="exampleInputEmail1">Hình ảnh</label>
+                            <div class="input-group">
+                                <div class="input-group">
+                                    <input asp-for="Image" type="file" class="form-control" />
+                                    @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Người tạo bài viết </label>
+                            @Html.TextBoxFor(x => x.CreatedBy, new { @class = "form-control", @plachilder = "Tên người tạo" })
+                            @Html.ValidationMessageFor(x => x.CreatedBy, null, new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Mô tả</label>
+                            @Html.TextBoxFor(x => x.Description, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.Description, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Detail" class="control-label">Chi Tiết </label>
+                            <textarea asp-for="Detail" id="inputDetai" class="form-control"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Hiển thị</label>
+                            @Html.CheckBoxFor(x => x.IsActicve)
+                            @Html.ValidationMessageFor(x => x.Description, "", new { @class = "text-danger" })
+                        </div>
+@* 
+                        <div class="form-group">
+                            <label asp-for="CategoryId" class="control-label">CategoryId</label>
+                            <select asp-for="CategoryId" asp-items="ViewBag.CategoryId" class="form-control">
+                            </select>
+                        </div>
+ *@
+                        <div class="form-group">
+                            <a asp-action="Index" class="btn btn-danger">Quay lại</a>
+                            <input type="submit" value="Create" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<script>
+    class MyUploadAdapter {
+    constructor( loader ) {
+        this.loader = loader;
+    }
+
+    upload() {
+        return this.loader.file
+            .then( file => new Promise( ( resolve, reject ) => {
+                this._initRequest();
+                this._initListeners( resolve, reject, file );
+                this._sendRequest( file );
+            } ) );
+    }
+    // Aborts the upload process.
+    abort() {
+        if ( this.xhr ) {
+            this.xhr.abort();
+        }
+    }
+
+    // Initializes the XMLHttpRequest object using the URL passed to the constructor.
+    _initRequest() {
+        const xhr = this.xhr = new XMLHttpRequest();
+
+        xhr.open( 'POST', '@Url.Action("UploadImage","News")', true );
+        xhr.responseType = 'json';
+    }
+
+    // Initializes XMLHttpRequest listeners.
+    _initListeners( resolve, reject, file ) {
+        const xhr = this.xhr;
+        const loader = this.loader;
+        const genericErrorText = `Couldn't upload file: ${ file.name }.`;
+
+        xhr.addEventListener( 'error', () => reject( genericErrorText ) );
+        xhr.addEventListener( 'abort', () => reject() );
+        xhr.addEventListener( 'load', () => {
+            const response = xhr.response;
+
+            if ( !response || response.error ) {
+                return reject( response && response.error ? response.error.message : genericErrorText );
+            }
+
+            resolve( {
+                default: response.url
+            } );
+        } );
+
+        if ( xhr.upload ) {
+            xhr.upload.addEventListener( 'progress', evt => {
+                if ( evt.lengthComputable ) {
+                    loader.uploadTotal = evt.total;
+                    loader.uploaded = evt.loaded;
+                }
+            } );
+        }
+    }
+
+    _sendRequest( file ) {
+        // Prepare the form data.
+        const data = new FormData();
+
+        data.append( 'upload', file );
+
+        // Send the request.
+        this.xhr.send( data );
+    }
+}
+
+function MyCustomUploadAdapterPlugin( editor ) {
+    editor.plugins.get( 'FileRepository' ).createUploadAdapter = ( loader ) => {
+        // Configure the URL to the upload script in your backend here!
+        return new MyUploadAdapter( loader );
+    };
+}
+
+ClassicEditor
+    .create( document.querySelector( '#inputDetai' ), {
+        extraPlugins: [ MyCustomUploadAdapterPlugin ],
+    } )
+    .then( editor => {
+        window.editor = editor;
+    })
+    .catch( error => {
+        console.error( error.stack );
+    } );
+</script>

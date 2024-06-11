@@ -1,0 +1,242 @@
+﻿@model X.PagedList.IPagedList<BookStoreTM.Models.Product>
+@using X.PagedList.Mvc.Core;
+@* @model IEnumerable<BookStoreTM.Models.Product> *@
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Quản Lý Sản Phẩm</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@ViewBag.Title</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title" style="margin-top: 0.5rem;"> @ViewBag.Title </h3>
+            <div class="row card-tools">
+                <form name="frmProduct" asp-action="index" asp-controller="product" method="get" class="form-inline">
+                    <div class="form-group" style="margin-right: 0.5rem;">
+                        <select class="custom-select" name="categoryId" style="min-width: 180px;" asp-items="ViewBag.CategoryId" onchange="location.href='/Admin/product/?categoryId='+this.value;">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="keyword">Tìm theo tên loại</label>
+                        <input class="form-control" name="name" id="keyword" placeholder="Nhập tên cần tìm" value="@ViewBag.keyword">
+                    </div>
+                    <button type="submit" class="btn btn-default mr-1"><i class="fas fa-search"></i></button>
+                </form>
+                <div>
+                    <a href="/admin/product/ThemSanPham" class="btn btn-info">Thêm mới</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width: 56px;">STT</th>
+                        <th>Hình ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Giá</th>
+                        <th>Giá Khuyến mại</th>
+                        <th>Home</th>
+                        <th>Sale</th>
+                        <th>Hiển thị</th>
+                        <th style="width: 80px;">Tác vụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = ((ViewBag.Page - 1) * ViewBag.PageSize) + 1;
+                        foreach (var item in Model)
+                        {
+                            var strCheck = item.IsActicve ? "<i class='fa fa-check text-success'></i>" : "<i class='fas fa-times text-danger'></i>"; //kiểm tra xem IsActicve là true hay false
+                            var strCheckHome = item.IsHome ? "<i class='fa fa-check text-success'></i>" : "<i class='fas fa-times text-danger'></i>";
+                            var strCheckSale = item.IsSale ? "<i class='fa fa-check text-success'></i>" : "<i class='fas fa-times text-danger'></i>";
+                            <tr id="trow_@item.ProductId">
+                                <td>@i, @item.Code</td>
+                                <td>
+                                    <a asp-action="Create" asp-controller="ProductImages" asp-route-id="@item.ProductId">
+                                        <img src="@item.Images" style="height:64px;width:64px" />
+                                    </a>
+
+                                </td>
+                                <td>@item.ProductName</td>
+                                <td>@item.ProductCategory.Name</td>
+                                <td>@BookStoreTM.Common.Common.FormatNumber(item.Price, 0) VND</td>
+                                <td>@BookStoreTM.Common.Common.FormatNumber(item.PriceSale, 0) VND</td>
+                                <td class="text-center">
+                                    <a href='#' data-id="@item.ProductId" class="btnHome">@Html.Raw(strCheckHome)</a>
+                                </td>
+                                <td class="text-center">
+                                    <a href='#' data-id="@item.ProductId" class="btnSale">@Html.Raw(strCheckSale)</a>
+                                </td>
+                                <td class="text-center">
+                                    <a href='#' data-id="@item.ProductId" class="btnActive">@Html.Raw(strCheck)</a>
+                                </td>
+                                <td class="d-flex">
+                                    <a asp-action="Details" asp-route-id="@item.ProductId" class="btn-sm btn-info"><i class="fa-solid fa-circle-info"></i></a>
+                                    <a asp-action="SuaSanPham" asp-route-model="@item.ProductId" class="btn-sm btn-info"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a class="btn-sm btn-info btn-delete" data-id="@item.ProductId"><i class="fa-solid fa-trash-can"></i></a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="10">Không có bản ghi nào </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="clearfix" style="margin-top: 2rem;">
+                <ul class="pagination pagination-sm m-0 float-right">
+                    @Html.PagedListPager(Model, page => Url.Action("index", new { page = page, categoryId = ViewBag.cateId, name = ViewBag.keyword }), new PagedListRenderOptions
+               {
+                   LiElementClasses = new string[] { "page-item" },
+                   PageClasses = new string[] { "page-link" }
+               })
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            //xoá
+            $('.btn-delete').on('click', function (e) {
+                e.preventDefault();
+                var id = $(this).data('id');
+                var deleteUrl = '/admin/Product/delete';
+
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger"
+                    },
+                    buttonsStyling: false
+                });
+
+                swalWithBootstrapButtons.fire({
+                    title: "Bạn có chắc muốn xoá bản ghi?",
+                    showCancelButton: true,
+                    confirmButtonText: "Xoá",
+                    cancelButtonText: "Không",
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: deleteUrl,
+                            type: 'POST',
+                            data: { id: id },
+                            success: function (response) {
+                                if (response.success) {
+                                    swalWithBootstrapButtons.fire({
+                                        text: "Bạn đã xoá thành công!",
+                                        icon: "success"
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    swalWithBootstrapButtons.fire({
+                                        title: "Bản ghi đã được sử dụng!",
+                                        text: "Bạn không thể xoá bản ghi.",
+                                        icon: "error"
+                                    });
+                                }
+                            },
+                        });
+                    }
+                });
+            });
+
+            // checkbox tình trạng bật tắt tin tức
+            $('body').on('click', '.btnActive', function (e) {
+                e.preventDefault();
+                var btn = $(this);
+                var id = btn.data("id");
+                $.ajax({
+                    url: '/admin/product/IsActicve', // chay vào IActionResult IsActicve(int id)
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (rs) {
+                        if (rs.success) {
+                            if (rs.isActicve) {
+                                btn.html("<i class='fa fa-check text-success'></i>");
+                            } else {
+                                btn.html("<i class='fas fa-times text-danger'></i>");
+                            }
+                        }
+                    }
+                });
+            });
+
+            // checkbox tình trạng bật tắt trang chủ
+            $('body').on('click', '.btnHome', function (e) {
+                e.preventDefault();
+                var btn = $(this);
+                var id = btn.data("id");
+                $.ajax({
+                    url: '/admin/product/IsHome',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (rs) {
+                        if (rs.success) {
+                            if (rs.isHome) {
+                                btn.html("<i class='fa fa-check text-success'></i>");
+                            } else {
+                                btn.html("<i class='fas fa-times text-danger'></i>");
+                            }
+                        }
+                    }
+                });
+            });
+
+            // checkbox hiển thị cho sản phẩm sale
+            $('body').on('click', '.btnSale', function (e) {
+                e.preventDefault();
+                var btn = $(this);
+                var id = btn.data("id");
+                $.ajax({
+                    url: '/admin/product/IsSale',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (rs) {
+                        if (rs.success) {
+                            if (rs.isSale) {
+                                btn.html("<i class='fa fa-check text-success'></i>");
+                            } else {
+                                btn.html("<i class='fas fa-times text-danger'></i>");
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+

@@ -1,0 +1,219 @@
+﻿@{
+    ViewData["Title"] = "Sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using X.PagedList.Mvc.Core;
+@model X.PagedList.IPagedList<BookStoreTM.Models.Product>
+
+<main class="main-content">
+    <div class="shop-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 order-lg-1 order-2 pt-10 pt-lg-0">
+                    <div class="sidebar-area">
+                        <div class="widgets-searchbox mb-9">
+                            <form id="widgets-searchbox" action="" method="get">
+                                <input class="input-field" name="name" value="@ViewBag.keyword" type="text" placeholder="Search">
+                                <button class="widgets-searchbox-btn" type="submit">
+                                    <i class="pe-7s-search"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 widgets-area ">
+                    <div class="product-topbar">
+                        <ul>
+                            <li class="product-view-wrap">
+                                <ul class="nav" role="tablist">
+                                    <li class="grid-view" role="presentation">
+                                        <a class="active" id="grid-view-tab" data-bs-toggle="tab" href="#grid-view" role="tab" aria-selected="true">
+                                            <i class="fa fa-th"></i>
+                                        </a>
+                                    </li>
+                                    <li class="list-view" role="presentation">
+                                        <a id="list-view-tab" data-bs-toggle="tab" href="#list-view" role="tab" aria-selected="true">
+                                            <i class="fa fa-th-list"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="page-count">
+                                @ViewBag.CateName
+                            </li>
+                            <li class="short">
+                                <select class=" wide rounded-0" style="display: none;">
+                                </select>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12 order-lg-2 order-1">
+
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="tab-content text-charcoal pt-8">
+
+                            <div class="tab-pane fade show active" id="grid-view" role="tabpanel" aria-labelledby="grid-view-tab">
+
+                                <div class="product-grid-view row">
+                                    @foreach (var item in Model)
+                                    {
+                                        <div class="col-lg-3 col-sm-6" style="margin-top: 1rem;">
+                                            <div class="product-item">
+                                                <div class="product-img img-zoom-effect">
+                                                    <a href="/products/detail/@item.ProductId">
+                                                        <img class="img-full fix-img" src="@item.Images" alt="@item.ProductName">
+                                                    </a>
+                                                    <div class="product-add-action">
+                                                        <ul>
+                                                            <li>
+                                                                <a asp-controller="ShopCart" asp-action="Add" asp-route-id="@item.ProductId">
+                                                                    <i class="pe-7s-cart"></i>
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a asp-controller="Favorite" asp-action="AddFavorite" asp-route-productId="@item.ProductId">
+                                                                    <i class="pe-7s-like"></i>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="product-content">
+                                                    <a class="product-name" href="/products/detail/@item.ProductId">@item.ProductName</a>
+                                                    <div class="price-box pb-1">
+                                                        @if (item.PriceSale > 0 && item.PriceSale < item.Price)
+                                                        {
+                                                            <span class="new-price">
+                                                                @BookStoreTM.Common.Common.FormatNumber(item.PriceSale, 0) VND
+                                                            </span>
+                                                            <br />
+                                                            <span class="old-price text-primary">
+                                                                @BookStoreTM.Common.Common.FormatNumber(item.Price, 0) VND
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="new-price">
+                                                                @BookStoreTM.Common.Common.FormatNumber(item.Price, 0) VND
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+                            </div>
+
+                            <div class="tab-pane fade" id="list-view" role="tabpanel" aria-labelledby="list-view-tab">
+                                <div class="product-list-view row">
+                                    @foreach (var item in Model)
+                                    {
+                                        <div class="col-12 pt-6">
+                                            <div class="product-item">
+                                                <div class="product-img img-zoom-effect">
+                                                    <a href="/products/detail/@item.ProductId">
+                                                        <img class="img-full fix-img" src="@item.Images" alt="@item.ProductName">
+                                                    </a>
+                                                    <div class="product-add-action">
+                                                        <ul>
+                                                            <li>
+                                                                <a asp-controller="ShopCart" asp-action="Add" asp-route-id="@item.ProductId">
+                                                                    <i class="pe-7s-cart"></i>
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a asp-controller="Favorite" asp-action="AddFavorite" asp-route-productId="@item.ProductId">
+                                                                    <i class="pe-7s-like"></i>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+
+                                                <div class="product-content align-self-center">
+                                                    <a class="product-name pb-2" href="/products/detail/@item.ProductId">@item.ProductName</a>
+                                                    <div class="price-box pb-1">
+                                                        @if (item.PriceSale > 0)
+                                                        {
+                                                            <span class="new-price">
+                                                                @BookStoreTM.Common.Common.FormatNumber(item.PriceSale, 0) VND
+                                                            </span>
+                                                            <br />
+                                                            <span class="old-price text-primary">
+                                                                @BookStoreTM.Common.Common.FormatNumber(item.Price, 0) VND
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="new-price">
+                                                                @BookStoreTM.Common.Common.FormatNumber(item.Price, 0) VND
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                    <p class="short-desc mb-0">@item.Description</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="pagination-area pt-10">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-center">
+                                        @Html.PagedListPager(Model, page => Url.Action("ProductCategory", new { id = ViewBag.CateId, page = page, name = @ViewBag.Name }), new PagedListRenderOptions
+                               {
+                                   LiElementClasses = new[] { "page-item" },
+                                   PageClasses = new[] { "page-link" },
+                               })
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="product-grid-view row" style="text-align: center;">
+                            <div style="margin-top: 4rem;">
+                                <img src="~/imagelayout/ketquatimkiem.png" />
+                            </div>
+                            <h4>Không có kết quả nào</h4>
+                            <p>Bạn hãy tìm kiếm với từ khoá khác</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .fix-img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+    }
+
+    .product-content .product-name {
+        line-height: 1.4em;
+        word-break: break-word;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        min-height: 2.8em;
+        max-height: 2.8em;
+    }
+</style>

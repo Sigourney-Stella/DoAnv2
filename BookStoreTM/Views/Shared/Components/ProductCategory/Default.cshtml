@@ -1,0 +1,108 @@
+﻿@model IEnumerable<BookStoreTM.Models.ProductCategory>
+@using Microsoft.AspNetCore.Http;
+@using Newtonsoft.Json;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var customers = ViewBag.Customer as BookStoreTM.Models.Customer;
+}
+
+@if (Model != null && Model.Any())
+{
+    <div class="header-middle py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-12">
+                    <div class="header-middle-wrap">
+                        <a asp-action="Index" asp-controller="Home" class="header-logo">
+                            <img src="~/imagesbook/logo1.png" alt="ThanhMai" style="width: 180px;">
+                        </a>
+                        <div class="row" style="width: 730px;">
+                            <div class="col-2">
+                                <ul class="dropdown-wrap text-matterhorn" style="border: solid 1px #e8e8e8; height: 84%; width: 125%;">
+                                    <li class="dropdown">
+                                        <button class="btn btn-link dropdown-toggle ht-btn" type="button" id="languageButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Danh Mục
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="languageButton" style="">
+                                            @foreach (var item in Model)
+                                            {
+                                                <li><a class="dropdown-item" href="/products/productcategory/@item.ProductCategoryId">@item.Name</a></li>
+                                            }
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-10">
+                                <form asp-controller="Products" asp-action="Index" method="get" class="header-searchbox">
+                                    <input class="input-field" name="name" value="@ViewBag.keyword" type="text" placeholder="Tìm kiếm sản phẩm">
+                                    <button class="btn btn-outline-whisper btn-primary-hover" type="submit"><i class="pe-7s-search"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <ul>
+                                <li class="dropdown d-none d-md-block">
+                                    <button class="btn btn-link dropdown-toggle ht-btn p-0" type="button" id="settingButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="pe-7s-users"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingButton">
+                                        @if (HttpContextAccessor.HttpContext.Session.GetString("Member") != null)
+                                        {
+                                            <li><a class="dropdown-item" asp-action="Detail" asp-controller="Customer" >Tài khoản của tôi</a></li>
+                                            <li><a class="dropdown-item" asp-action="Logout" asp-controller="Customer">Thoát tài khoản</a></li>
+                                        }
+                                        else
+                                        {
+                                            <li><a class="dropdown-item" asp-action="Login" asp-controller="Customer">Đăng nhập</a></li>
+                                            <li><a class="dropdown-item" asp-action="Registy" asp-controller="Customer">Đăng ký</a></li>
+                                        }
+                                    </ul>
+                                </li>
+                                <li class="d-none d-md-block">
+                                    <a asp-action="Add" asp-controller="Favorite">
+                                        <i class="pe-7s-like"></i>
+                                    </a>
+                                </li>
+                                <li class="d-block d-lg-none">
+                                    <a href="#searchBar" class="search-btn toolbar-btn">
+                                        <i class="pe-7s-search"></i>
+                                    </a>
+                                </li>
+                                <li class="d-none d-md-block">
+                                    <a href="/shopcart">
+                                        <i class="pe-7s-shopbag"></i>
+                                        <span class="quantity">@ViewBag.CartTotalQuantity</span>
+                                    </a>
+                                </li>
+                                <li class="mobile-menu_wrap d-block d-lg-none">
+                                    <a href="#mobileMenu" class="mobile-menu_btn toolbar-btn pl-0">
+                                        <i class="pe-7s-menu"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<style>
+    span.quantity {
+        border-radius: 28rem;
+        background-color: #bac34e;
+        border-radius: 100%;
+        text-align: center;
+        font-size: 14px;
+        color: #fff;
+        display: block;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        position: absolute;
+        top: -5px;
+        right: 0;
+    }
+</style>
+
+

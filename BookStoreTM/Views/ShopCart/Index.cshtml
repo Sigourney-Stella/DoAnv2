@@ -1,0 +1,238 @@
+﻿@model IEnumerable<BookStoreTM.Models.EF.ShopCart>
+@using Microsoft.AspNetCore.Http;
+@using Newtonsoft.Json;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Gio hang";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="main-content">
+    <div class="cart-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                <p class="shopCart">Giỏ hàng</p>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <form action="javascript:void(0)">
+                        <div class="">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th class="product-thumbnail">Hình ảnh</th>
+                                        <th class="cart-product-name">Tên Sản Phẩm</th>
+                                        <th class="product-price">Giá Tiền</th>
+                                        <th class="product-quantity">Số lượng</th>
+                                        <th class="product-subtotal">Tổng tiền</th>
+                                        <th class="product_remove"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Any())
+                                    {
+                                        var i = 1;
+                                        @foreach (var item in Model)
+                                        {
+                                            var money = item.PriceSale * item.Quantity;
+                                            <tr>
+                                                <td>@(i)</td>
+                                                <td class="product-thumbnail">
+                                                    <a href="javascript:void(0)" >
+                                                        <img src="@item.ProductImg" alt="@item.ProductName">
+                                                    </a>
+                                                </td>
+                                                <td class="product-name" style="width: 490px;"><a asp-controller="Products" asp-action="Detail" asp-route-id="@item.ProductId">@item.ProductName</a></td>
+                                                <td class="product-price">
+                                                    <div class="price-box pb-1">
+
+
+                                                        @if (item.PriceSale > 0)
+                                                        {
+                                                            <span data-price="@item.PriceSale" class="new-price">
+                                                                @BookStoreTM.Common.Common.FormatNumber(item.PriceSale, 0) VND
+                                                            </span>
+                                                            <br />
+                                                            <span data-price="@item.Price" class="old-price text-primary">
+                                                                @BookStoreTM.Common.Common.FormatNumber(item.Price, 0) VND
+                                                            </span>
+                                                        }
+
+                                                        else
+                                                        {
+                                                            <span data-price="@item.Price" class="new-price text-primary">
+                                                                @BookStoreTM.Common.Common.FormatNumber(item.Price, 0) VND
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                </td>
+                                                <td class="quantity">
+                                                    <div class="cart-plus-minus">
+                                                        <div class="dec qtybutton"><i class="fa fa-minus"></i></div>
+                                                        <input class="cart-plus-minus-box" value="@item.Quantity" data-max-quantity="@item.MaxQuantity" type="text">
+                                                        <div class="inc qtybutton"><i class="fa fa-plus"></i></div>
+                                                    </div>
+                                                    <p class="quantity-pro">Còn @item.MaxQuantity sản phẩm</p>
+                                                </td>
+                                                <td class="product-subtotal">
+                                                    <p data-money="@money" class="total-money">
+                                                        <span id="money">
+                                                            @BookStoreTM.Common.Common.FormatNumber(@money, 0)
+                                                        </span> VND
+                                                    </p>
+                                                </td>
+                                                <td class="product_remove btn-action">
+                                                    <a href="/shopcart/remove/?id=@item.ProductId" data-id="@item.ProductId" class="btn btn-primary btn-secondary-hover remove">Xóa</a>
+                                                    <a href="#" data-id="@item.ProductId" class="btn btn-primary btn-secondary-hover update">Cập nhật</a>
+                                                </td>
+                                            </tr>
+                                            i++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6">Không có sản phẩm nào</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="coupon-all">
+                                    <div class="coupon2">
+                                        <input asp-controller="Products" asp-action="Index" class="button" name="Tiếp tục mua hàng" value="Tiếp tục mua hàng" type="submit">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5 ml-auto">
+                                <div class="cart-page-total">
+                                    <h2>Chi tiết thanh toán</h2>
+                                    <ul>
+                                        <li>Số sản phẩm <span>@ViewBag.Count</span></li>
+                                        <li>
+                                            Tổng thanh toán <span id="totalMoney">
+                                                @BookStoreTM.Common.Common.FormatNumber(ViewBag.Total, 0) VND
+                                            </span>
+                                        </li>
+                                    </ul>
+                                    @if (HttpContextAccessor.HttpContext.Session.GetString("Member") != null)
+                                    {
+                                        <a id="buyButton" asp-action="Order" asp-controller="ShopCart">Mua hàng</a>
+                                    }
+                                    else
+                                    {
+                                        <a id="buyButton" asp-action="Login" asp-controller="Customer">Mua hàng</a>
+                                    }
+                                    @* <a href="/shopcart/checkout">Mua hàng</a> *@
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .quantity-pro{
+        font-size: 9px;
+        color: red;
+        padding-top: 5px;
+    }
+
+    tr {
+        text-align: center;
+    }
+
+    img {
+        max-width: 100px !important;
+    }
+
+    .shopCart {
+        font-weight: 600;
+        font-size: 32px;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        text-align: center; 
+    }
+
+    .swal2-title {
+        font-family: sans-serif;
+    }
+</style>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#buyButton").click(function (e) {
+            // Kiểm tra số lượng hàng tr giỏ hàng có sản phẩm hay không
+            if ($("tbody tr").length === 1 && $("tbody tr td").length === 1) {
+                // alert("Bạn vẫn chưa chọn sản phẩm nào để mua.");
+                Swal.fire({
+                    title: "Bạn vẫn chưa chọn sản phẩm nào.",
+                    showClass: {
+                        popup: `
+                              animate__animated
+                              animate__fadeInUp
+                              animate__faster
+                            `
+                    },
+                   
+                    hideClass: {
+                        popup: `
+                              animate__animated
+                              animate__fadeOutDown
+                              animate__faster
+                            `
+                    },
+                    customClass: {
+                        title: 'swal2-title',
+                        confirmButton: 'swal2-confirm'
+                    }
+                    
+                });
+                e.preventDefault();
+            } else {
+                window.location.href = '@Url.Action("Order", "ShopCart")';
+            }
+        });
+
+        $(".inc.qtybutton").click(function () {
+            var $input = $(this).siblings(".cart-plus-minus-box");
+            var currentVal = parseInt($input.val());
+            var maxVal = parseInt($input.data("max-quantity"));
+            if (currentVal < maxVal) {
+                $input.val(currentVal);
+            } else {
+                $input.val(maxVal);
+                Swal.fire({
+                    title: "Sản phẩm còn lại là " + maxVal + ".Bạn vui lòng không mua quá số lượng!",
+                    showClass: {
+                        popup: `
+                                  animate__animated
+                                  animate__fadeInUp
+                                  animate__faster
+                                `
+                    },
+                    hideClass: {
+                        popup: `
+                                  animate__animated
+                                  animate__fadeOutDown
+                                  animate__faster
+                                `
+                    }
+                });
+            }
+        });
+    });
+</script>
